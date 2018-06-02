@@ -1,7 +1,7 @@
 <?php
 /**
-* Webservice untuk data customer
-* Webservice untuk melayani data customer
+* Webservice untuk data produk
+* Webservice untuk melayani data produk
 */ 
 require_once APPPATH . 'libraries/REST_Controller.php' ;
 use Restserver\Libraries\REST_Controller;
@@ -10,30 +10,30 @@ class API extends REST_Controller {
 	function __construct($config = 'rest') {
 		parent ::__construct($config);
 	}
-	function customers_get() {
+	function produks_get() {
 		$id = $this->get('id');
 		if ($id) {
-			$customer = $this->db->get_where('customer',
-				array('customerID'=>$id))-result();
+			$produk = $this->db->get_where('produk', array('id_produk'=>$id))->result();
 		}else {
-			$customer = $this->db->get('customer')->result();
+			$produk = $this->db->get('produk')->result();
 		}
 	 // generate response
-	 if($customer){
-		$this->response($customer,200);
+	 if($produk){
+		$this->response($produk,200);
 				}else{
 			$this->response(array('status'=>'not found'), 404);
 		}
 	}
 
-	function customers_post() {
+	function produks_post() {
 		$params = array(
-			'customerName' => $this->post('name'),
-			'customerPhone' => $this->post('phone'),
-			'customerCity' => $this->post('city'));
-		 $process = $this->db->insert('customer', $params);
+			'nama' => $this->post('nama'),
+			'deskripsi' => $this->post('deskripsi'),
+			'kategori' => $this->post('kategori'),
+			'harga' => $this->post('harga'));
+		 $process = $this->db->insert('produk', $params);
 		 if($process){
-			// 2-1 artinya Succesful creation of a resource.
+			// 201 artinya Succesful creation of a resource.
 			$this->response(array('status'=>'succes'),201);
 		 }else{
 			// 502 artinya Backend service failure (data store failure).
@@ -42,24 +42,26 @@ class API extends REST_Controller {
 		
 	}
 
-	function customers_put() {
+
+	function produks_put() {
 		$params = array(
-				'customerName'=> $this->put('name'),
-				'customerPhone'=> $this->put('phone'),
-				'customerCity'=> $this->put('city'));
-		$this->db->where('customerID', $this->put('id'));
-		$execute = $this->db->update('customer', $params);
+				'nama'=> $this->put('nama'),
+				'deskripsi'=> $this->put('deskripsi'),
+				'kategori'=> $this->put('kategori'),
+				'harga' => $this->put('harga'));
+		$this->db->where('id_produk', $this->put('id'));
+		$execute = $this->db->update('produk', $params);
 		if($execute){
 			$this->response(array('status'=>'succes'),201);
 		}else{
-			return $this0>response(array('status'=>'fail'), 502);	
+			return $this->response(array('status'=>'fail'), 502);	
 		}	
 	}
 	
 
-	function customers_delete() {
-		$this->db->where('customerID', $this->delete('id'));
-		$execute =$this->db->delete('customer');
+	function produks_delete() {
+		$this->db->where('id_produk', $this->delete('id'));
+		$execute =$this->db->delete('produk');
 		if($execute){
 			$this->response(array('status'=>'succes'),201);
 		}else{
